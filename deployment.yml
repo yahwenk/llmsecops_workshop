@@ -1,0 +1,93 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gpt-huggingface
+  labels:
+    app: gpt-hf
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: gpt-hf-pod
+  template:
+    metadata:
+      labels:
+        app: gpt-hf-pod
+    spec:
+      containers:
+      - name: gptcontainer
+        # IMPORTANT: Change 'your-username' to your actual Docker Hub username
+        image: your-username/fastapi-api:latest
+        
+        # Use IfNotPresent for local images, Always for production
+        imagePullPolicy: IfNotPresent
+        
+        ports:
+        - containerPort: 8000
+          name: http
+          protocol: TCP
+        
+        # Environment variables (optional)
+        env:
+        - name: ENVIRONMENT
+          value: "kubernetes"
+        - name: LOG_LEVEL
+          value: "info"
+        
+        # Resource limits (adjust based on your needs)
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "1000m"
+          limits:
+            memory: "4Gi"
+            cpu: "2000m"
+        
+        # Health checks
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 60  # Wait for model to load
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 5
+          timeoutSeconds: 5
+          failureThreshold: 3
+        
+        # Startup probe (for slow-starting apps like ML models)
+        startupProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 0
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 12  # Allow up to 2 minutes for startup
+
+
+# Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: gpt-hf-service
+  labels:
+    app: gpt-hf
+spec:
+  type: NodePort
+  selector:
+    app: gpt-hf-pod
+  ports:
+  - name: http
+    port: 8000        # Service port
+    targetPort: 8000  # Container port
+    nodePort: 30007   # External port (30000-32767)
+    protocol: TCP
+
