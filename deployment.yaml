@@ -16,8 +16,8 @@ spec:
     spec:
       containers:
       - name: gptcontainer
-        # IMPORTANT: Change 'your-username' to your actual Docker Hub username
-        image: your-username/fastapi-api:latest
+        
+        image: teddyflake/fastapi-api:latest
         
         # Use IfNotPresent for local images, Always for production
         imagePullPolicy: IfNotPresent
