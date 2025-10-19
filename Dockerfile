@@ -1,4 +1,4 @@
-FROM python:3.9-slim
+FROM python:3.10-slim
 # Set the working directory in the container
 WORKDIR /app
 # Copy only the requirements file to leverage Docker cache
@@ -11,4 +11,4 @@ COPY . .
 EXPOSE 8000
 # Use a minimal entrypoint and CMD
 ENTRYPOINT ["python"]
-CMD ["day02.py"]
+CMD ["python", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

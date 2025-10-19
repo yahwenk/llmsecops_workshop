@@ -72,7 +72,7 @@ spec:
           timeoutSeconds: 5
           failureThreshold: 12  # Allow up to 2 minutes for startup
 
-
+---
 # Service
 apiVersion: v1
 kind: Service
@@ -90,4 +90,4 @@ spec:
     targetPort: 8000  # Container port
     nodePort: 30007   # External port (30000-32767)
     protocol: TCP
-
+---
