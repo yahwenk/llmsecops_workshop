@@ -5,7 +5,7 @@ on:
     branches: [main]
 
 env:
-  DOCKER_IMAGE: ${{ secrets.DOCKER_USERNAME }}/llm-qa-app
+  DOCKER_IMAGE: ${{ secrets.DOCKER_USERNAME }}/fastapi-api
 
 jobs:
   deploy:
